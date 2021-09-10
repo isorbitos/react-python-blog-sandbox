@@ -1,4 +1,6 @@
 import { Fragment } from "react";
+import ReactHtmlParser from 'react-html-parser';
+import { Link } from "react-router-dom";
 
 const FullPost = (props) => {
 
@@ -38,12 +40,12 @@ const FullPost = (props) => {
         <div className="container">
           <div className="row">
             <div className="col-lg-8 col-md-10 mx-auto">
-              <p>{post.body}</p>
+              <div>{ReactHtmlParser(post.body)}</div>
               <hr />
               <div className="clearfix">
-                <a className="btn btn-primary float-right" href="/editPost">
+                <Link to={`/edit-post/${post.id}`} className="btn btn-primary float-end">
                   Edit Post
-                </a>
+                </Link>
               </div>
             </div>
           </div>

@@ -1,20 +1,12 @@
-from flask import Flask, render_template, redirect, url_for, jsonify
-# from flask_bootstrap import Bootstrap
-from flask_sqlalchemy import SQLAlchemy
-# from flask_wtf import FlaskForm
-# from wtforms import StringField, SubmitField
-# from wtforms.validators import DataRequired, URL
-# from flask_ckeditor import CKEditor, CKEditorField
-import time
+import datetime
 
-## Delete this code:
-# import requests
-# posts = requests.get("https://api.npoint.io/43644ec4f0013682fc0d").json()
+from flask import Flask, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
+
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
-# ckeditor = CKEditor(app)
-# Bootstrap(app)
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
@@ -38,15 +30,6 @@ class BlogPost(db.Model):
         return dictionary
 
 
-##WTForm
-# class CreatePostForm(FlaskForm):
-#     title = StringField("Blog Post Title", validators=[DataRequired()])
-#     subtitle = StringField("Subtitle", validators=[DataRequired()])
-#     author = StringField("Your Name", validators=[DataRequired()])
-#     img_url = StringField("Blog Image URL", validators=[DataRequired(), URL()])
-#     body = StringField("Blog Content", validators=[DataRequired()])
-#     submit = SubmitField("Submit Post")
-
 
 @app.route('/allPosts')
 def get_all_posts():
@@ -60,6 +43,48 @@ def show_post(post_id):
     if requested_post:
         return jsonify(post=requested_post.to_dict())
     return jsonify(error={"Not found": "Sorry, no post with this ID."}), 404
+
+
+@app.route("/new-post", methods=["GET", "POST"])
+def add_new_post():
+    post_data = request.get_json()
+
+    new_post = BlogPost(
+        title=post_data['title'],
+        subtitle=post_data['subtitle'],
+        body=post_data['body'],
+        img_url=post_data['img_url'],
+        author=post_data['author'],
+        date=datetime.datetime.fromtimestamp(float(post_data['date'])/1000.0).strftime("%B %d, %Y")
+    )
+    db.session.add(new_post)
+    db.session.commit()
+    return jsonify(message={"OK": "server got info!!!"}), 200
+
+@app.post("/edit-post/<int:post_id>")
+def edit_post(post_id):
+    post = BlogPost.query.get(post_id)
+    if post:
+        post_data = request.get_json()
+
+        # post.title = post_data['title']
+        # post.subtitle = post_data['subtitle']
+        # post.img_url = post_data['img_url']
+        # post.author = post_data['author']
+        post.body = post_data['body']
+        db.session.commit()
+        return jsonify(message={"OK": "hi got info!!!"}), 200
+
+    return jsonify(error={"OK": "someting wrong"}), 404
+
+@app.delete("/delete/<int:post_id>")
+def delete_post(post_id):
+    post_to_delete = BlogPost.query.get(post_id)
+    if post_to_delete:
+        db.session.delete(post_to_delete)
+        db.session.commit()
+        return jsonify(message={"OK": "Post deleted!!!"}), 200
+    return jsonify(error={"OK": "someting wrong"}), 404
 
 
 # @app.route("/about")

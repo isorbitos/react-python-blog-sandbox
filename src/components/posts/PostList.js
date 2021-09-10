@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import PostItem from "./PostItem";
 
 const PostList = ()=>{
@@ -57,7 +58,10 @@ const PostList = ()=>{
                             <PostItem key={post.id} post={post}/>
                         ))}
                         <div className="clearfix">
-                             <a className="btn btn-primary float-end" href="/newpost">Create New Post</a>
+                            <Link className="btn btn-primary float-end" to="/new-post">
+                                Create New Post
+                            </Link>
+                             
                         </div>
                     </div>
                 </div>
