@@ -1,0 +1,12 @@
+.swithButton {
+  margin-top: 1rem;
+  background-color: transparent;
+  color: #3db6ee;
+  border: none;
+  padding: 0.15rem 1.5rem;
+}
+
+.swithButton:hover{
+    background-color: transparent;
+    color: #4d89a5;
+}

@@ -2,6 +2,7 @@ import datetime
 
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 
@@ -29,7 +30,14 @@ class BlogPost(db.Model):
             dictionary[column.name] = getattr(self, column.name)
         return dictionary
 
+class User(db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(200))
+    name = db.Column(db.String(100))
 
+# db.create_all()
 
 @app.route('/allPosts')
 def get_all_posts():
@@ -84,15 +92,28 @@ def delete_post(post_id):
         db.session.delete(post_to_delete)
         db.session.commit()
         return jsonify(message={"OK": "Post deleted!!!"}), 200
-    return jsonify(error={"OK": "someting wrong"}), 404
+    return jsonify(error={"error": "someting wrong"}), 404
 
 
-# @app.route("/about")
-# def about():
-#     return render_template("about.html")
-#
-#
-# @app.route("/contact")
-# def contact():
-#     return render_template("contact.html")
+@app.post('/register')
+def register():
+    form_data = request.get_json()
+
+    if form_data:
+        hash_and_salted_password = generate_password_hash(
+            form_data['password'],
+            method='pbkdf2:sha256',
+            salt_length=8
+        )
+        new_user = User(
+            email=form_data['email'],
+            name=form_data['name'],
+            password=hash_and_salted_password,
+        )
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify(message={"OK": "User Created"}), 200
+
+    return jsonify(error={"error": "someting wrong"}), 404
 

@@ -1,6 +1,7 @@
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import AllPosts from './pages/AllPosts';
+import AuthPage from './pages/AuthPage';
 import EditPost from './pages/EditPost';
 import NewPost from './pages/NewPost';
 import NotFound from './pages/NotFound';
@@ -18,6 +19,9 @@ function App() {
         </Route>
         <Route path="/posts" exact>
           <AllPosts />
+        </Route>
+        <Route path="/login">
+            <AuthPage />
         </Route>
         <Route path='/posts/:postId'>
           <PostDetail />

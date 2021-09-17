@@ -41,7 +41,7 @@ const PostItem = (props)=>{
                 
                 <p className="post-meta">Posted by
                 <a href="/">{ props.post.author }</a>
-                on {props.post.date} <button onClick={deltePostHandler}><i class="fas fa-times"></i></button> </p>
+                on {props.post.date} <button onClick={deltePostHandler}><i className="fas fa-times"></i></button> </p>
                 
             </div>
             <hr />
